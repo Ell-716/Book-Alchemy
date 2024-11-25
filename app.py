@@ -1,9 +1,9 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 from data_models import db, Author, Book
 import os
 import requests
 from datetime import datetime
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from requests.exceptions import RequestException
 
 app = Flask(__name__)
@@ -113,20 +113,17 @@ def add_book():
 
 @app.route("/", methods=["GET"])
 def home_page():
-    # Default sorting and search criteria
     sort = request.args.get('sort', 'author')
-    search = request.args.get('search', '').strip()
+    search = request.args.get('search') or ""
+    message = request.args.get('message')
 
-    books_with_cover = []
-
-    # Handle search query
     if search:
-        books = db.session.query(Book, Author).join(Author).filter(Book.title.like(f"%{search}%")).all()
+        books = db.session.query(Book, Author).join(Author) \
+            .filter(Book.title.like(f"%{search}%")) \
+            .order_by(Book.title).all()
         if not books:
-            message = f"No books found matching '{search}'."
-            return render_template("home.html", books=[], sort=sort, message=message)
-
-    # Handle sorting query
+            return render_template("home.html", books=[], search=search,
+                                   message="No books found matching your search.")
     else:
         if sort == 'author':
             books = db.session.query(Book, Author).join(Author).order_by(Author.name).all()
@@ -135,7 +132,8 @@ def home_page():
         else:
             books = db.session.query(Book, Author).join(Author).all()
 
-    # Fetch book cover images
+    # Fetch book covers and combine data
+    books_with_cover = []
     for book, author in books:
         isbn = book.isbn
         google_books_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
@@ -149,11 +147,40 @@ def home_page():
                     cover = data["items"][0].get("volumeInfo", {}).get("imageLinks", {}).get("thumbnail", None)
 
             books_with_cover.append((book, author, cover))
-        except RequestException as e:
-            print(f"Error fetching cover for ISBN {isbn}: {e}")
+        except RequestException:
             books_with_cover.append((book, author, None))
 
-    return render_template("home.html", books=books_with_cover, sort=sort, search=search)
+    return render_template("home.html", books=books_with_cover,
+                           sort=sort, search=search, message=message)
+
+
+@app.route("/book/<int:book_id>/delete", methods=["POST"])
+def delete_book(book_id):
+    try:
+        book_to_delete = db.session.query(Book).filter(Book.id == book_id).first()
+        if not book_to_delete:
+            return redirect(url_for('home_page', message=f"Book with ID {book_id} not found!"))
+
+        book_title = book_to_delete.title
+        author_id = book_to_delete.author_id
+
+        db.session.query(Book).filter(Book.id == book_id).delete()
+
+        # Check if the author has other books, and delete the author if none exist
+        if not db.session.query(Book).filter(Book.author_id == author_id).count():
+            db.session.query(Author).filter(Author.id == author_id).delete()
+
+        db.session.commit()
+        return redirect(url_for('home_page', message=f"Book '{book_title}' deleted successfully!"))
+
+    except IntegrityError as e:
+        db.session.rollback()
+        print(f"IntegrityError: {e}")
+        return redirect(url_for('home_page', message="Database integrity error occurred during deletion."))
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        print(f"SQLAlchemyError: {e}")
+        return redirect(url_for('home_page', message="An unexpected error occurred. Please try again."))
 
 
 if __name__ == "__main__":

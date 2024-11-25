@@ -34,13 +34,13 @@
     <!-- Search form -->
     <form method="GET">
       <label for="search">Search:</label>
-      <input id="search" name="search" type="text" value="{{ search }}" placeholder="Search books...">
+      <input id="search" name="search" type="text" value="{{ search | default('') }}" placeholder="Search books...">
       <input type="submit" value="Search">
     </form>
 
     <!-- Display message if provided -->
     {% if message %}
-      <p style="color: red;">{{ message }}</p>
+      <p style="color: green;">{{ message }}</p>
     {% endif %}
 
     <ul>
@@ -51,10 +51,15 @@
 
           <!-- Display book cover if available -->
           {% if cover %}
-            <img src="{{ cover }}" alt="{{ book.title }} cover" width="100"><br><br>
+           <img src="{{ cover }}" alt="{{ book.title }} cover" width="100"><br><br>
           {% else %}
             <img src="https://via.placeholder.com/100x150?text=No+Cover" alt="No cover available"><br><br>
           {% endif %}
+
+          <!-- Delete Button -->
+          <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" style="display:inline;">
+            <button type="submit" class="action-button">Delete</button>
+          </form>
         </li>
       {% endfor %}
     </ul>
