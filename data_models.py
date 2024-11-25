@@ -9,8 +9,8 @@ class Author(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
-    birth_date = Column(Date, nullable=True)
-    date_of_death = Column(Date, nullable=True)
+    birth_date = Column(String, nullable=True)
+    date_of_death = Column(String, nullable=True)
 
     def __repr__(self):
         return f"Author(id = {self.id}, name = {self.name})"

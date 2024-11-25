@@ -13,15 +13,19 @@
     <h2>Books in my collection:</h2>
 
     <ul>
-      {% for book, author in books %}
-        <li>
-          <h3>{{ book.title }}</h3>
-          <p>Author: {{ author.name }}</p>
+  {% for book, author, cover in books %}
+    <li>
+      <h3>{{ book.title }}</h3>
+      <p>Author: {{ author.name }}</p>
 
-          <!-- Using Open Library API to fetch book cover image using ISBN -->
-          <img src="https://covers.openlibrary.org/b/id/{{ book.isbn }}-L.jpg" alt="{{ book.title }} cover" width="100"><br><br>
-        </li>
-      {% endfor %}
+      <!-- Display book cover if available -->
+      {% if cover %}
+        <img src="{{ cover }}" alt="{{ book.title }} cover" width="100"><br><br>
+      {% else %}
+        <img src="https://via.placeholder.com/100x150?text=No+Cover" alt="No cover available"><br><br>
+      {% endif %}
+    </li>
+    {% endfor %}
     </ul>
 
   </body>

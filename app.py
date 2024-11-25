@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template
 from data_models import db, Author, Book
 import os
+import requests
 
 app = Flask(__name__)
 
@@ -19,8 +20,8 @@ db.init_app(app)
 def add_author():
     if request.method == "POST":
         name = request.form.get('name').strip()
-        birth_date = request.form.get('birth_date').strip()
-        date_of_death = request.form.get('date_of_death').strip()
+        birth_date = request.form.get('birth_date')
+        date_of_death = request.form.get('date_of_death')
 
         if not name:  # Ensure the name is not empty
             warning_message = "Author name is required."
@@ -80,5 +81,25 @@ def home_page():
     # Query all books and join with the author table to get author names
     books = db.session.query(Book, Author).join(Author).all()
 
-    # Render the home page with books data
+    # Fetch book cover images using Google Books API
+    for i, (book, author) in enumerate(books):
+        isbn = book.isbn
+        google_books_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
+
+        response = requests.get(google_books_url)
+
+        if response.status_code == 200:
+            data = response.json()
+            if "items" in data:
+                book_cover = data["items"][0].get("volumeInfo", {}).get("imageLinks", {}).get("thumbnail", None)
+                books[i] = (book, author, book_cover)
+            else:
+                books[i] = (book, author, None)
+        else:
+            books[i] = (book, author, None)
+
     return render_template("home.html", books=books)
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
