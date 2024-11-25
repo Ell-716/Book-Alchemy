@@ -4,11 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Add Book</title>
   </head>
   <body>
 
-  <form action="/add_author" method="POST">
-  <!-- Add the form here -->
+  <!-- Success message -->
+  {% if success_message %}
+    <p style="color: green; font-weight: bold;">{{ success_message }}</p>
+  {% endif %}
+
+  <!-- Warning message -->
+  {% if warning_message %}
+    <p style="color: red; font-weight: bold;">{{ warning_message }}</p>
+  {% endif %}
+
+  <form action="/add_book" method="POST">
+    <label for="isbn">ISBN:</label>
+    <input type="text" id="isbn" name="isbn"><br><br>
+
+    <label for="title">Book Title:</label>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="publication_year">Publication Year:</label>
+    <input type="date" id="publication_year" name="publication_year" required><br><br>
+
+    <!-- Dropdown for selecting author -->
+    <label for="author_id">Select Author:</label>
+    <select id="author_id" name="author_id" required>
+        <option value="" disabled selected>Select an author</option>
+        {% for author in authors %}
+            <option value="{{ author.id }}">{{ author.name }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <input type="submit" value="Add Book">
   </form>
 
   </body>
