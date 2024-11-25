@@ -113,18 +113,29 @@ def add_book():
 
 @app.route("/", methods=["GET"])
 def home_page():
-    # Default to sorting by author if not provided
+    # Default sorting and search criteria
     sort = request.args.get('sort', 'author')
+    search = request.args.get('search', '').strip()
 
-    if sort == 'author':
-        books = db.session.query(Book, Author).join(Author).order_by(Author.name).all()
-    elif sort == 'title':
-        books = db.session.query(Book, Author).join(Author).order_by(Book.title).all()
-    else:
-        books = db.session.query(Book, Author).join(Author).all()
-
-    # Fetch book cover images using Google Books API
     books_with_cover = []
+
+    # Handle search query
+    if search:
+        books = db.session.query(Book, Author).join(Author).filter(Book.title.like(f"%{search}%")).all()
+        if not books:
+            message = f"No books found matching '{search}'."
+            return render_template("home.html", books=[], sort=sort, message=message)
+
+    # Handle sorting query
+    else:
+        if sort == 'author':
+            books = db.session.query(Book, Author).join(Author).order_by(Author.name).all()
+        elif sort == 'title':
+            books = db.session.query(Book, Author).join(Author).order_by(Book.title).all()
+        else:
+            books = db.session.query(Book, Author).join(Author).all()
+
+    # Fetch book cover images
     for book, author in books:
         isbn = book.isbn
         google_books_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
@@ -142,7 +153,7 @@ def home_page():
             print(f"Error fetching cover for ISBN {isbn}: {e}")
             books_with_cover.append((book, author, None))
 
-    return render_template("home.html", books=books_with_cover, sort=sort)
+    return render_template("home.html", books=books_with_cover, sort=sort, search=search)
 
 
 if __name__ == "__main__":

@@ -31,6 +31,18 @@
       <input type="submit" value="Sort">
     </form>
 
+    <!-- Search form -->
+    <form method="GET">
+      <label for="search">Search:</label>
+      <input id="search" name="search" type="text" value="{{ search }}" placeholder="Search books...">
+      <input type="submit" value="Search">
+    </form>
+
+    <!-- Display message if provided -->
+    {% if message %}
+      <p style="color: red;">{{ message }}</p>
+    {% endif %}
+
     <ul>
       {% for book, author, cover in books %}
         <li>
