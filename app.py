@@ -1,10 +1,10 @@
-from flask import Flask, request, render_template, redirect, url_for
-from data_models import db, Author, Book
 import os
 import requests
 from datetime import datetime
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from data_models import db, Author, Book
+from flask import Flask, request, render_template, redirect, url_for
 from requests.exceptions import RequestException
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 app = Flask(__name__)
 
@@ -14,6 +14,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{base_dir}/data/library.sqli
 
 db.init_app(app)
 
+
 # Create the database tables. Run once
 # with app.app_context():
 #     db.create_all()
@@ -21,6 +22,14 @@ db.init_app(app)
 
 @app.route("/add_author", methods=["GET", "POST"])
 def add_author():
+    """
+    Handles the creation of a new author. The function accepts both GET and POST requests.
+    - GET: Renders the form for adding a new author.
+    - POST: Processes the form submission, validates the input, and adds the author to the database.
+
+    Returns:
+        - Rendered HTML templates based on the success or failure of adding the author.
+    """
     if request.method == "POST":
         name = request.form.get('name').strip()
         birth_date = request.form.get('birth_date')
@@ -67,6 +76,14 @@ def add_author():
 
 @app.route("/add_book", methods=["GET", "POST"])
 def add_book():
+    """
+    Handles the creation of a new book. The function accepts both GET and POST requests.
+    - GET: Renders the form for adding a new book.
+    - POST: Processes the form submission, validates the input, and adds the book to the database.
+
+    Returns:
+        - Rendered HTML templates based on the success or failure of adding the book.
+    """
     if request.method == "POST":
         isbn = request.form.get('isbn').strip()
         title = request.form.get('title').strip()
@@ -113,6 +130,13 @@ def add_book():
 
 @app.route("/", methods=["GET"])
 def home_page():
+    """
+    Displays the homepage with a list of books. The books can be sorted by author or title,
+    and a search functionality is available to filter books by title.
+
+    Returns:
+        - Rendered homepage with books, sorted and/or filtered based on the user's input.
+    """
     sort = request.args.get('sort', 'author')
     search = request.args.get('search') or ""
     message = request.args.get('message')
@@ -156,6 +180,15 @@ def home_page():
 
 @app.route("/book/<int:book_id>/delete", methods=["POST"])
 def delete_book(book_id):
+    """
+    Deletes a book from the database and removes the author if they no longer have any books.
+
+    Args:
+        book_id (int): The ID of the book to be deleted.
+
+    Returns:
+        - Redirects to the homepage with a success or error message.
+    """
     try:
         book_to_delete = db.session.query(Book).filter(Book.id == book_id).first()
         if not book_to_delete:
