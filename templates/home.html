@@ -12,20 +12,39 @@
 
     <h2>Books in my collection:</h2>
 
-    <ul>
-  {% for book, author, cover in books %}
-    <li>
-      <h3>{{ book.title }}</h3>
-      <p>Author: {{ author.name }}</p>
+    <!-- Sorting dropdown -->
+    <form method="GET">
+      <label for="sort">Sort by:</label>
+      <select id="sort" name="sort">
+        {% if sort == 'author' %}
+          <option value="author" selected>Author</option>
+        {% else %}
+          <option value="author">Author</option>
+        {% endif %}
 
-      <!-- Display book cover if available -->
-      {% if cover %}
-        <img src="{{ cover }}" alt="{{ book.title }} cover" width="100"><br><br>
-      {% else %}
-        <img src="https://via.placeholder.com/100x150?text=No+Cover" alt="No cover available"><br><br>
-      {% endif %}
-    </li>
-    {% endfor %}
+        {% if sort == 'title' %}
+          <option value="title" selected>Title</option>
+        {% else %}
+          <option value="title">Title</option>
+        {% endif %}
+      </select>
+      <input type="submit" value="Sort">
+    </form>
+
+    <ul>
+      {% for book, author, cover in books %}
+        <li>
+          <h3>{{ book.title }}</h3>
+          <p>Author: {{ author.name }}</p>
+
+          <!-- Display book cover if available -->
+          {% if cover %}
+            <img src="{{ cover }}" alt="{{ book.title }} cover" width="100"><br><br>
+          {% else %}
+            <img src="https://via.placeholder.com/100x150?text=No+Cover" alt="No cover available"><br><br>
+          {% endif %}
+        </li>
+      {% endfor %}
     </ul>
 
   </body>

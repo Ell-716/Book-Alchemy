@@ -2,6 +2,9 @@ from flask import Flask, request, render_template
 from data_models import db, Author, Book
 import os
 import requests
+from datetime import datetime
+from sqlalchemy.exc import SQLAlchemyError
+from requests.exceptions import RequestException
 
 app = Flask(__name__)
 
@@ -27,17 +30,36 @@ def add_author():
             warning_message = "Author name is required."
             return render_template("add_author.html", warning_message=warning_message)
 
+        # Validate birth date and date of death
+        try:
+            if birth_date and not datetime.strptime(birth_date, "%Y-%m-%d"):
+                raise ValueError("Birth date must be in YYYY-MM-DD format.")
+        except ValueError as e:
+            warning_message = f"Invalid birth date: {e}"
+            return render_template("add_author.html", warning_message=warning_message)
+
+        try:
+            if date_of_death and not datetime.strptime(date_of_death, "%Y-%m-%d"):
+                raise ValueError("Date of death must be in YYYY-MM-DD format.")
+        except ValueError as e:
+            warning_message = f"Invalid date of death: {e}"
+            return render_template("add_author.html", warning_message=warning_message)
+
         author = Author(
             name=name,
             birth_date=birth_date if birth_date else None,
             date_of_death=date_of_death if date_of_death else None
         )
 
-        db.session.add(author)
-        db.session.commit()
-
-        success_message = "Author added successfully!"
-        return render_template("add_author.html", success_message=success_message)
+        try:
+            db.session.add(author)
+            db.session.commit()
+            success_message = "Author added successfully!"
+            return render_template("add_author.html", success_message=success_message)
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            warning_message = f"Error adding author to the database: {e}"
+            return render_template("add_author.html", warning_message=warning_message)
 
     if request.method == "GET":
         return render_template("add_author.html")
@@ -57,6 +79,13 @@ def add_book():
                                    authors=Author.query.all(),
                                    warning_message=warning_message)
 
+        # Validate ISBN
+        if not isbn.isdigit() or len(isbn) not in [10, 13]:
+            warning_message = "Invalid ISBN. It should be 10 or 13 digits."
+            return render_template("add_book.html",
+                                   authors=Author.query.all(),
+                                   warning_message=warning_message)
+
         book = Book(
             author_id=author_id,
             isbn=isbn,
@@ -64,13 +93,19 @@ def add_book():
             publication_year=publication_year if publication_year else None
         )
 
-        db.session.add(book)
-        db.session.commit()
-
-        success_message = "Book added successfully!"
-        return render_template("add_book.html",
-                               authors=Author.query.all(),
-                               success_message=success_message)
+        try:
+            db.session.add(book)
+            db.session.commit()
+            success_message = "Book added successfully!"
+            return render_template("add_book.html",
+                                   authors=Author.query.all(),
+                                   success_message=success_message)
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            warning_message = f"Error adding book to the database: {e}"
+            return render_template("add_book.html",
+                                   authors=Author.query.all(),
+                                   warning_message=warning_message)
 
     if request.method == "GET":
         return render_template("add_book.html", authors=Author.query.all())
@@ -78,27 +113,36 @@ def add_book():
 
 @app.route("/", methods=["GET"])
 def home_page():
-    # Query all books and join with the author table to get author names
-    books = db.session.query(Book, Author).join(Author).all()
+    # Default to sorting by author if not provided
+    sort = request.args.get('sort', 'author')
+
+    if sort == 'author':
+        books = db.session.query(Book, Author).join(Author).order_by(Author.name).all()
+    elif sort == 'title':
+        books = db.session.query(Book, Author).join(Author).order_by(Book.title).all()
+    else:
+        books = db.session.query(Book, Author).join(Author).all()
 
     # Fetch book cover images using Google Books API
-    for i, (book, author) in enumerate(books):
+    books_with_cover = []
+    for book, author in books:
         isbn = book.isbn
         google_books_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
 
-        response = requests.get(google_books_url)
+        try:
+            response = requests.get(google_books_url)
+            cover = None
+            if response.status_code == 200:
+                data = response.json()
+                if "items" in data:
+                    cover = data["items"][0].get("volumeInfo", {}).get("imageLinks", {}).get("thumbnail", None)
 
-        if response.status_code == 200:
-            data = response.json()
-            if "items" in data:
-                book_cover = data["items"][0].get("volumeInfo", {}).get("imageLinks", {}).get("thumbnail", None)
-                books[i] = (book, author, book_cover)
-            else:
-                books[i] = (book, author, None)
-        else:
-            books[i] = (book, author, None)
+            books_with_cover.append((book, author, cover))
+        except RequestException as e:
+            print(f"Error fetching cover for ISBN {isbn}: {e}")
+            books_with_cover.append((book, author, None))
 
-    return render_template("home.html", books=books)
+    return render_template("home.html", books=books_with_cover, sort=sort)
 
 
 if __name__ == "__main__":
