@@ -4,13 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home - Book Library</title>
   </head>
   <body>
 
-    {% for book in books %}
-    <div> <h3>{{ book.title }}</h3>
-    </div>
-    {% endfor %}
+    <h1>Welcome to the Book Library</h1>
+
+    <h2>Books in my collection:</h2>
+
+    <ul>
+      {% for book, author in books %}
+        <li>
+          <h3>{{ book.title }}</h3>
+          <p>Author: {{ author.name }}</p>
+
+          <!-- Using Open Library API to fetch book cover image using ISBN -->
+          <img src="https://covers.openlibrary.org/b/id/{{ book.isbn }}-L.jpg" alt="{{ book.title }} cover" width="100"><br><br>
+        </li>
+      {% endfor %}
+    </ul>
 
   </body>
 </html>

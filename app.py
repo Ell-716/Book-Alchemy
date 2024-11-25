@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template
-from flask_sqlalchemy import SQLAlchemy
 from data_models import db, Author, Book
 import os
 
@@ -74,3 +73,12 @@ def add_book():
 
     if request.method == "GET":
         return render_template("add_book.html", authors=Author.query.all())
+
+
+@app.route("/", methods=["GET"])
+def home_page():
+    # Query all books and join with the author table to get author names
+    books = db.session.query(Book, Author).join(Author).all()
+
+    # Render the home page with books data
+    return render_template("home.html", books=books)
