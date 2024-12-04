@@ -46,6 +46,10 @@ header h1 {
   background-color: #218838;
 }
 
+.sort-form {
+  margin: 0;
+}
+
 .sort-dropdown {
   padding: 8px;
   font-size: 14px;
@@ -53,6 +57,11 @@ header h1 {
   border-radius: 4px;
   appearance: none;
   background: #fff;
+}
+
+.sort-dropdown:focus {
+  outline: none;
+  border-color: #007bff;
 }
 
 /* Search Form Section */
@@ -223,6 +232,66 @@ main {
 
 .back-button:hover {
   background-color: #aaa;
+}
+
+/* Detail page unified layout */
+.detail-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.book-info {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 700px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.book-info h1 {
+  font-size: 28px;
+  margin-bottom: 25px;
+  color: #007bff;
+}
+
+.book-info img {
+  display: block;
+  margin: 0 auto 20px;
+  max-width: 250px;
+  height: auto;
+  border-radius: 4px;
+}
+
+.author-info {
+  margin: 10px 0 5px;
+  font-size: 18px;
+  color: #333;
+}
+
+.author-dates {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.book-info p {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.book-info h3 {
+  margin-top: 25px;
+  font-size: 20px;
+  color: #333;
+}
+
+footer {
+  text-align: center;
+  margin-top: 50px;
 }
 
 /* Responsive Design */

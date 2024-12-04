@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ book.title }} - Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <main>
+      <div class="detail-container">
+        <div class="book-info">
+          <h1>{{ book.title }}</h1>
+          <img
+            src="{{ book_info.imageLinks.thumbnail if book_info.get('imageLinks') else 'https://via.placeholder.com/150x200?text=No+Cover' }}"
+            alt="{{ book.title }} cover"
+          />
+          <p class="author-info">
+            <strong>Written by:</strong> {{ author.name }}
+          </p>
+          <p class="author-dates">
+            {{ author.birth_year }}{% if author.death_year %} - {{ author.death_year }}{% else %} - Present{% endif %}
+          </p>
+          <p><strong>Publication Year:</strong> {{ book.publication_year }}</p>
+          <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+          <h3>Description</h3>
+          <p>{{ book_info.get('description', 'No description available.') }}</p>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>© {{ current_year }} Book Library</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

@@ -217,5 +217,24 @@ def delete_book(book_id):
         return redirect(url_for('home_page', message="An unexpected error occurred. Please try again."))
 
 
+@app.route('/book/<int:book_id>')
+def book_detail(book_id):
+    # Retrieve the book from your database
+    book = Book.query.get_or_404(book_id)
+
+    # Fetch additional data from Google Books API
+    google_books_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{book.isbn}"
+    response = requests.get(google_books_url)
+    google_data = response.json()
+
+    # Extract book information from Google Books API response
+    book_info = google_data.get('items', [{}])[0].get('volumeInfo', {})
+
+    # Get author information (assuming it's linked to the book)
+    author = book.author
+
+    return render_template('book_detail.html', book=book, author=author, book_info=book_info)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
