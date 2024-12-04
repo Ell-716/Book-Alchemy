@@ -5,30 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Add Author</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   </head>
   <body>
 
-  <!-- Success message  -->
+  <!-- Success message -->
   {% if success_message %}
-    <p style="color: green; font-weight: bold;">{{ success_message }}</p>
+    <p class="alert alert-success">{{ success_message }}</p>
   {% endif %}
 
   <!-- Warning message -->
   {% if warning_message %}
-    <p style="color: red; font-weight: bold;">{{ warning_message }}</p>
+    <p class="alert alert-warning">{{ warning_message }}</p>
   {% endif %}
 
-  <form action="/add_author" method="POST">
+  <!-- Form for adding an author -->
+  <form action="/add_author" method="POST" class="styled-form">
+    <label for="name">Author Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
 
-  <label for="name">Author Name:</label>
-  <input type="text" id="name" name="name" required><br><br>
+    <label for="birth_year">Birth Year:</label>
+    <input type="date" id="birth_year" name="birth_year" required><br><br>
 
-  <label for="birth_date">Birthdate:</label>
-  <input type="date" id="birth_date" name="birth_date" required><br><br>
+    <label for="death_year">Death Year:</label>
+    <input type="date" id="death_year" name="death_year"><br><br>
 
-  <label for="date_of_death">Date of Death:</label>
-  <input type="date" id="date_of_death" name="date_of_death"><br><br>
-  <input type="submit" value="Add Author">
+    <input type="submit" value="Add Author">
   </form>
 
   </body>

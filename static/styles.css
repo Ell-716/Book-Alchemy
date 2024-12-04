@@ -1,0 +1,268 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+header {
+  padding: 20px;
+  background-color: #007bff;
+  color: white;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 36px;
+  flex: 1;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.add-button {
+  padding: 8px 15px;
+  font-size: 14px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  background-color: #218838;
+}
+
+.sort-dropdown {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  appearance: none;
+  background: #fff;
+}
+
+/* Search Form Section */
+.search-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.search-sort-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.input-group {
+  display: flex;
+  gap: 5px;
+}
+
+input#search {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 300px;
+}
+
+.search-button {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: white;
+  background-color: #0056b3;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #004494;
+}
+
+/* Main grid layout */
+main {
+  padding: 20px;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.book-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.book-card h3 {
+  margin: 10px 0;
+}
+
+.book-card p {
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+.book-cover {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+}
+
+.delete-form button {
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.delete-form button:hover {
+  background-color: #c82333;
+}
+
+/* Styling for Add Book and Add Author pages */
+.styled-form {
+  max-width: 600px;
+  margin: 50px auto;
+  background-color: #FFF;
+  border: 1px solid #DDD;
+  padding: 35px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.styled-form label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+  color: #333;
+}
+
+.styled-form input[type="text"],
+.styled-form input[type="date"],
+.styled-form select {
+  width: 95%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #CCC;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.styled-form select {
+  padding-right: 30px; /* Adjust for dropdown width */
+}
+
+.styled-form input[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.styled-form input[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* Success and warning messages */
+.alert {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.alert-warning {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Back button for better UX */
+.back-button {
+  background-color: #ccc;
+  color: #333;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 4px;
+  margin-top: 20px;
+  display: inline-block;
+}
+
+.back-button:hover {
+  background-color: #aaa;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  header h1 {
+    font-size: 20px;
+  }
+
+  .header-right {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .search-section {
+    margin-top: 20px;
+  }
+
+  .search-sort-form {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input#search,
+  .search-button,
+  .sort-dropdown {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .search-button {
+    margin-left: 0;
+  }
+}

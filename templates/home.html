@@ -5,64 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home - Book Library</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   </head>
   <body>
+    <header>
+      <div class="header-container">
+        <h1>My Book Library</h1>
+        <div class="header-right">
+          <a href="{{ url_for('add_book') }}" class="add-button">Add a book</a>
+          <a href="{{ url_for('add_author') }}" class="add-button">Add an author</a>
 
-    <h1>Welcome to the Book Library</h1>
-
-    <h2>Books in my collection:</h2>
-
-    <!-- Sorting dropdown -->
-    <form method="GET">
-      <label for="sort">Sort by:</label>
-      <select id="sort" name="sort">
-        {% if sort == 'author' %}
-          <option value="author" selected>Author</option>
-        {% else %}
-          <option value="author">Author</option>
-        {% endif %}
-
-        {% if sort == 'title' %}
-          <option value="title" selected>Title</option>
-        {% else %}
-          <option value="title">Title</option>
-        {% endif %}
-      </select>
-      <input type="submit" value="Sort">
-    </form>
-
-    <!-- Search form -->
-    <form method="GET">
-      <label for="search">Search:</label>
-      <input id="search" name="search" type="text" value="{{ search | default('') }}" placeholder="Search books...">
-      <input type="submit" value="Search">
-    </form>
-
-    <!-- Display message if provided -->
-    {% if message %}
-      <p style="color: green;">{{ message }}</p>
-    {% endif %}
-
-    <ul>
-      {% for book, author, cover in books %}
-        <li>
-          <h3>{{ book.title }}</h3>
-          <p>Author: {{ author.name }}</p>
-
-          <!-- Display book cover if available -->
-          {% if cover %}
-           <img src="{{ cover }}" alt="{{ book.title }} cover" width="100"><br><br>
-          {% else %}
-            <img src="https://via.placeholder.com/100x150?text=No+Cover" alt="No cover available"><br><br>
-          {% endif %}
-
-          <!-- Delete Button -->
-          <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" style="display:inline;">
-            <button type="submit" class="action-button">Delete</button>
+          <!-- Sorting Dropdown -->
+          <form method="GET" action="{{ url_for('home_page') }}">
+            <select name="sort" class="sort-dropdown" onchange="this.form.submit()">
+              <option value="author" {% if sort == 'author' %}selected{% endif %}>Sort by Author</option>
+              <option value="title" {% if sort == 'title' %}selected{% endif %}>Sort by Title</option>
+            </select>
+            <input type="hidden" name="search" value="{{ search | default('') }}">
           </form>
-        </li>
-      {% endfor %}
-    </ul>
+        </div>
+      </div>
+    </header>
 
+    <!-- Search Form Section -->
+    <section class="search-section">
+      <form method="GET" class="search-sort-form">
+        <div class="input-group">
+          <input
+            id="search"
+            name="search"
+            type="text"
+            value="{{ search | default('') }}"
+            placeholder="Search books..."
+          />
+          <button type="submit" class="search-button">Search</button>
+        </div>
+      </form>
+    </section>
+
+    <main>
+      <div class="book-grid">
+        {% for book, author, cover in books %}
+        <div class="book-card">
+          <img
+            src="{{ cover or 'https://via.placeholder.com/150x200?text=No+Cover' }}"
+            alt="{{ book.title }} cover"
+            class="book-cover"
+          />
+          <h3>{{ book.title }}</h3>
+          <p>{{ author.name }}</p>
+          <form
+            action="{{ url_for('delete_book', book_id=book.id) }}"
+            method="POST"
+            class="delete-form"
+          >
+            <button type="submit">Delete</button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

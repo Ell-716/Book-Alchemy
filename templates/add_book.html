@@ -5,20 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Add Book</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">  <!-- Make sure to link the main stylesheet -->
   </head>
   <body>
 
   <!-- Success message -->
   {% if success_message %}
-    <p style="color: green; font-weight: bold;">{{ success_message }}</p>
+    <p class="alert alert-success">{{ success_message }}</p>
   {% endif %}
 
   <!-- Warning message -->
   {% if warning_message %}
-    <p style="color: red; font-weight: bold;">{{ warning_message }}</p>
+    <p class="alert alert-warning">{{ warning_message }}</p>
   {% endif %}
 
-  <form action="/add_book" method="POST">
+  <!-- Form for adding a book -->
+  <form action="/add_book" method="POST" class="styled-form">
     <label for="isbn">ISBN:</label>
     <input type="text" id="isbn" name="isbn"><br><br>
 
@@ -26,7 +28,7 @@
     <input type="text" id="title" name="title" required><br><br>
 
     <label for="publication_year">Publication Year:</label>
-    <input type="number" id="publication_year" name="publication_year" required><br><br>
+    <input type="text" id="publication_year" name="publication_year" required><br><br>
 
     <!-- Dropdown for selecting author -->
     <label for="author_id">Select Author:</label>

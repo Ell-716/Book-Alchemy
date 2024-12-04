@@ -154,7 +154,8 @@ def home_page():
         elif sort == 'title':
             books = db.session.query(Book, Author).join(Author).order_by(Book.title).all()
         else:
-            books = db.session.query(Book, Author).join(Author).all()
+            # Default sorting by author if the sort parameter is not valid or missing
+            books = db.session.query(Book, Author).join(Author).order_by(Author.name).all()
 
     # Fetch book covers and combine data
     books_with_cover = []
