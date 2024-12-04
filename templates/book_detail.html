@@ -20,8 +20,16 @@
             <strong>Written by:</strong> {{ author.name }}
           </p>
           <p class="author-dates">
-            {{ author.birth_year }}{% if author.death_year %} - {{ author.death_year }}{% else %} - Present{% endif %}
+            <span class="date">
+              ({{ author.birth_date.strftime('%d.%m.%Y') if author.birth_date else 'Unknown' }}
+            </span>
+            {% if author.date_of_death %}
+              - <span class="date">{{ author.date_of_death.strftime('%d.%m.%Y') }})</span>
+            {% else %}
+              - Present
+            {% endif %}
           </p>
+
           <p><strong>Publication Year:</strong> {{ book.publication_year }}</p>
           <p><strong>ISBN:</strong> {{ book.isbn }}</p>
           <h3>Description</h3>

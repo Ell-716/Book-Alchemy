@@ -21,43 +21,44 @@ db.init_app(app)
 
 
 @app.route("/add_author", methods=["GET", "POST"])
+@app.route("/add_author", methods=["GET", "POST"])
 def add_author():
     """
     Handles the creation of a new author. The function accepts both GET and POST requests.
     - GET: Renders the form for adding a new author.
     - POST: Processes the form submission, validates the input, and adds the author to the database.
-
-    Returns:
-        - Rendered HTML templates based on the success or failure of adding the author.
     """
     if request.method == "POST":
         name = request.form.get('name').strip()
-        birth_date = request.form.get('birth_date')
-        date_of_death = request.form.get('date_of_death')
+        birth_date = request.form.get('birth_year')
+        date_of_death = request.form.get('death_year')
 
         if not name:  # Ensure the name is not empty
             warning_message = "Author name is required."
             return render_template("add_author.html", warning_message=warning_message)
 
-        # Validate birth date and date of death
-        try:
-            if birth_date and not datetime.strptime(birth_date, "%Y-%m-%d"):
-                raise ValueError("Birth date must be in YYYY-MM-DD format.")
-        except ValueError as e:
-            warning_message = f"Invalid birth date: {e}"
-            return render_template("add_author.html", warning_message=warning_message)
+        # Convert birth_date and date_of_death to datetime objects if provided
+        if birth_date:
+            try:
+                birth_date = datetime.strptime(birth_date, "%Y-%m-%d")  # Ensure correct date format
+            except ValueError:
+                birth_date = None  # Handle incorrect date format
+        else:
+            birth_date = None
 
-        try:
-            if date_of_death and not datetime.strptime(date_of_death, "%Y-%m-%d"):
-                raise ValueError("Date of death must be in YYYY-MM-DD format.")
-        except ValueError as e:
-            warning_message = f"Invalid date of death: {e}"
-            return render_template("add_author.html", warning_message=warning_message)
+        if date_of_death:
+            try:
+                date_of_death = datetime.strptime(date_of_death, "%Y-%m-%d")  # Ensure correct date format
+            except ValueError:
+                date_of_death = None  # Handle incorrect date format
+        else:
+            date_of_death = None
 
+        # Create the Author object
         author = Author(
             name=name,
-            birth_date=birth_date if birth_date else None,
-            date_of_death=date_of_death if date_of_death else None
+            birth_date=birth_date,
+            date_of_death=date_of_death
         )
 
         try:

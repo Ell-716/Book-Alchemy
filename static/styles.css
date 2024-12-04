@@ -5,6 +5,9 @@ body {
   padding: 0;
   background-color: #f4f4f9;
   color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 header {
@@ -104,6 +107,52 @@ input#search {
   background-color: #004494;
 }
 
+/* Search Results Section */
+.search-result-container {
+  max-width: 350px; /* Increase width for a bigger container */
+  margin: 30px auto; /* Adjust margin for spacing */
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 25px; /* More padding inside the container */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.search-result-container .book-cover {
+  width: 200px; /* Larger cover image */
+  height: auto;
+  border-radius: 5px;
+}
+
+/* Book Title and Author in Search Result */
+.search-result-container .book-details {
+  flex: 1;
+  text-align: center;
+}
+
+.search-result-container h2 {
+  color: #007bff;
+  font-size: 24px; /* Larger title font size */
+  margin: 10px 0; /* Adjust margin for spacing */
+}
+
+.search-result-container p {
+  margin: 5px 0;
+  font-size: 16px; /* Larger font size for author name */
+  color: #555;
+}
+
+.search-result-container .description {
+  margin-top: 10px;
+  font-size: 18px; /* Larger description font size */
+  line-height: 1.5; /* Adjust line height */
+  color: #666;
+}
+
 /* Main grid layout */
 main {
   padding: 20px;
@@ -116,6 +165,10 @@ main {
 }
 
 .book-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -125,18 +178,39 @@ main {
 }
 
 .book-card h3 {
-  margin: 10px 0;
+  margin: 2px 0;
+  font-size: 16px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.book-card h3 a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
 }
 
 .book-card p {
   font-size: 14px;
-  margin: 10px 0;
+  margin: 2px 0;
+}
+
+.book-card h3 a:hover {
+  text-decoration: underline;
+  color: #0056b3;
 }
 
 .book-cover {
   width: 100%;
   height: auto;
   border-radius: 3px;
+}
+
+.delete-form {
+  margin-top: auto;
 }
 
 .delete-form button {
@@ -146,6 +220,7 @@ main {
   border: none;
   border-radius: 3px;
   cursor: pointer;
+  margin-top: 10px;
 }
 
 .delete-form button:hover {
@@ -154,18 +229,21 @@ main {
 
 /* Styling for Add Book and Add Author pages */
 .styled-form {
-  max-width: 600px;
+  width: 100%;
+  max-width: 800px;
   margin: 50px auto;
   background-color: #FFF;
   border: 1px solid #DDD;
-  padding: 35px;
+  padding: 25px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
 .styled-form label {
   font-weight: bold;
-  margin-top: 15px;
+  margin-top: 10px;
   display: block;
   color: #333;
 }
@@ -173,28 +251,29 @@ main {
 .styled-form input[type="text"],
 .styled-form input[type="date"],
 .styled-form select {
-  width: 95%;
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid #CCC;
-  border-radius: 5px;
+  padding: 12px 15px;
   font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .styled-form select {
-  padding-right: 30px; /* Adjust for dropdown width */
+  padding-right: 30px;
 }
 
 .styled-form input[type="submit"] {
   background-color: #007bff;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 0;
   font-size: 16px;
   font-weight: bold;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  width: 100%;
   transition: background-color 0.3s;
 }
 
@@ -257,13 +336,21 @@ main {
   margin-bottom: 25px;
   color: #007bff;
 }
-
-.book-info img {
-  display: block;
-  margin: 0 auto 20px;
-  max-width: 250px;
-  height: auto;
+.book-cover-container {
+  width: 150px;      /* Fixed width for all images */
+  height: 200px;     /* Fixed height for all images */
+  overflow: hidden;  /* Ensures images that are too large are cropped */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 4px;
+}
+
+.book-cover {
+  width: 100%;       /* Ensures the image fills the container */
+  height: 100%;      /* Ensures the image fills the container */
+  object-fit: cover; /* Ensures the image will cover the container area */
+  object-position: center; /* Centers the image within the container */
 }
 
 .author-info {
@@ -294,6 +381,12 @@ footer {
   margin-top: 50px;
 }
 
+.author-dates .date {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #555;
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
   .header-container {
@@ -311,6 +404,11 @@ footer {
     align-items: center;
     gap: 10px;
     width: 100%;
+  }
+
+.styled-form {
+    width: 100%;
+    margin: 20px;
   }
 
   .search-section {

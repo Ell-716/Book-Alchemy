@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
@@ -19,8 +19,8 @@ class Author(db.Model):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
-    birth_date = Column(String, nullable=True)
-    date_of_death = Column(String, nullable=True)
+    birth_date = Column(Date, nullable=True)
+    date_of_death = Column(Date, nullable=True)
 
     def __repr__(self):
         """
