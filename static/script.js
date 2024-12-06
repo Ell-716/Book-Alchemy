@@ -75,21 +75,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const scrollLeftButton = document.querySelector(".scroll-button.left");
     const scrollRightButton = document.querySelector(".scroll-button.right");
     const bookGrid = document.querySelector(".book-grid");
+    const scrollContainer = document.querySelector(".book-grid");
+
+    const bookWidth = document.querySelector(".book-card").offsetWidth;
+    const gap = 20;
+
+    const scrollStep = (bookWidth + gap) * 4;
 
     if (scrollLeftButton && scrollRightButton && bookGrid) {
         scrollLeftButton.addEventListener("click", () => {
             bookGrid.scrollBy({
-                left: -800, // Adjust based on book width and gap (200px book + 20px gap * 4)
+                left: -scrollStep,
                 behavior: "smooth",
             });
         });
 
-        // Scroll right
         scrollRightButton.addEventListener("click", () => {
             bookGrid.scrollBy({
-                left: 800, // Scroll right by the width of 4 books
+                left: scrollStep,
                 behavior: "smooth",
             });
         });
+    }
+
+    const searchInput = document.getElementById("search");
+    if (searchInput) {
+        searchInput.value = ""; // Clear the input field on page load
     }
 });

@@ -7,6 +7,8 @@ body {
   flex-direction: column;
   min-height: 100vh;
   background: url(background.jpeg);
+  box-sizing: border-box;
+   width: 100%;
 }
 
 header {
@@ -101,16 +103,31 @@ input#search {
 
 /* Search Results Section */
 .search-result-container {
-  max-width: 900px; /* Match the width of the home page container */
+  width: 100%;
   margin: 30px auto;
   display: flex;
-  flex-wrap: wrap; /* Allow books to wrap */
-  gap: 20px; /* Space between books */
-  justify-content: center; /* Center align the books */
-  background-color: transparent; /* Remove container background */
-  border: none; /* Remove border */
-  padding: 0; /* Remove padding */
-  box-shadow: none; /* Remove shadow */
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .book-card {
+    flex: 0 0 150px; /* More flexible size for smaller screens */
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .book-card {
+    flex: 0 0 100%; /* Full width on very small screens */
+    height: auto;
+  }
 }
 
 /* Individual Book Card (reuse homepage styles) */
@@ -225,23 +242,45 @@ main {
 .book-grid {
   display: flex;
   gap: 20px;
-  overflow-x: auto;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   padding: 10px;
+  width: 100%;
+  transition: transform 0.3s ease-in-out;
 }
 
 /* Single book card */
 .book-card {
   flex: 0 0 200px;
   height: 450px;
-  scroll-snap-align: center;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 10px;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .book-card {
+    flex: 0 0 calc(33.33% - 20px); /* Show 3 books */
+  }
+}
+
+@media (max-width: 768px) {
+  .book-card {
+    flex: 0 0 calc(50% - 20px); /* Show 2 books */
+  }
+}
+
+@media (max-width: 480px) {
+  .book-card {
+    flex: 0 0 calc(100% - 20px); /* Show 1 book */
+  }
 }
 
 /* Book cover styling */
@@ -310,6 +349,7 @@ main {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .styled-form label {
@@ -350,6 +390,44 @@ main {
 
 .styled-form input[type="submit"]:hover {
   background-color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .styled-form {
+    max-width: 600px;
+    padding: 20px;
+  }
+
+  .styled-form input[type="text"],
+  .styled-form input[type="date"],
+  .styled-form select {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .styled-form input[type="submit"] {
+    font-size: 14px;
+    padding: 12px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .styled-form {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .styled-form input[type="text"],
+  .styled-form input[type="date"],
+  .styled-form select {
+    font-size: 14px;
+  }
+
+  .styled-form input[type="submit"] {
+    font-size: 14px;
+    padding: 10px 0;
+  }
 }
 
 /* Success and warning messages */
