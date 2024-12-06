@@ -17,7 +17,7 @@ db.init_app(app)
 
 # Create the database tables. Run once
 # with app.app_context():
-#     db.create_all()
+   # db.create_all()
 
 
 @app.route("/add_author", methods=["GET", "POST"])
@@ -75,6 +75,19 @@ def add_author():
         return render_template("add_author.html")
 
 
+def fetch_book_details(isbn):
+    api_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        data = response.json()
+        if "items" in data:
+            volume_info = data["items"][0]["volumeInfo"]
+            cover_url = volume_info.get("imageLinks", {}).get("thumbnail", None)
+            description = volume_info.get("description", None)
+            return cover_url, description
+    return None, None
+
+
 @app.route("/add_book", methods=["GET", "POST"])
 def add_book():
     """
@@ -90,6 +103,8 @@ def add_book():
         title = request.form.get('title').strip()
         publication_year = request.form.get('publication_year').strip()
         author_id = request.form.get('author_id')
+        cover_url = request.form.get('cover_url')
+        description = request.form.get('description')
 
         if not title:
             warning_message = "Book title is required."
@@ -108,7 +123,9 @@ def add_book():
             author_id=author_id,
             isbn=isbn,
             title=title,
-            publication_year=publication_year if publication_year else None
+            publication_year=publication_year if publication_year else None,
+            cover_url=cover_url,
+            description=description
         )
 
         try:
@@ -155,7 +172,6 @@ def home_page():
         elif sort == 'title':
             books = db.session.query(Book, Author).join(Author).order_by(Book.title).all()
         else:
-            # Default sorting by author if the sort parameter is not valid or missing
             books = db.session.query(Book, Author).join(Author).order_by(Author.name).all()
 
     # Fetch book covers and combine data

@@ -1,5 +1,5 @@
-// Validate Add Author Form
 document.addEventListener("DOMContentLoaded", () => {
+    // Validate Add Author Form
     const addAuthorForm = document.querySelector("form[action='/add_author']");
     if (addAuthorForm) {
         addAuthorForm.addEventListener("submit", (event) => {
@@ -46,6 +46,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // Validate publication year (optional check if needed)
+            if (publicationYearInput.value && isNaN(publicationYearInput.value)) {
+                event.preventDefault();
+                alert("Please enter a valid year for the publication year!");
+                return;
+            }
+
             // Validate author selection
             if (!authorSelect.value) {
                 event.preventDefault();
@@ -63,4 +70,26 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+
+    // Scroll functionality for book list
+    const scrollLeftButton = document.querySelector(".scroll-button.left");
+    const scrollRightButton = document.querySelector(".scroll-button.right");
+    const bookGrid = document.querySelector(".book-grid");
+
+    if (scrollLeftButton && scrollRightButton && bookGrid) {
+        scrollLeftButton.addEventListener("click", () => {
+            bookGrid.scrollBy({
+                left: -800, // Adjust based on book width and gap (200px book + 20px gap * 4)
+                behavior: "smooth",
+            });
+        });
+
+        // Scroll right
+        scrollRightButton.addEventListener("click", () => {
+            bookGrid.scrollBy({
+                left: 800, // Scroll right by the width of 4 books
+                behavior: "smooth",
+            });
+        });
+    }
 });

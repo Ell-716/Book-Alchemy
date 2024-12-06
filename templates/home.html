@@ -45,9 +45,8 @@
     <!-- Search Results Section -->
     {% if search %}
     <section class="search-result-container">
-      <div class="book-grid">
         {% for book, author, cover in books %}
-        <div class="book-cover-container">
+        <div class="book-card">
           <img
             src="{{ cover or 'https://via.placeholder.com/150x200?text=No+Cover' }}"
             alt="{{ book.title }} cover"
@@ -71,32 +70,36 @@
     {% endif %}
 
     <!-- Book Grid (for displaying all books) -->
-    {% if not search %}
-    <main>
-      <div class="book-grid">
-        {% for book, author, cover in books %}
-        <div class="book-card">
-          <img
-            src="{{ cover or 'https://via.placeholder.com/150x200?text=No+Cover' }}"
-            alt="{{ book.title }} cover"
-            class="book-cover"
-          />
-          <h3>
-            <a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a>
-          </h3>
-          <p>{{ author.name }}</p>
-          <form
-            action="{{ url_for('delete_book', book_id=book.id) }}"
-            method="POST"
-            class="delete-form"
-          >
-            <button type="submit">Delete</button>
-          </form>
+{% if not search %}
+<main>
+    <div class="scroll-container">
+        <button class="scroll-button left">&#10094;</button>
+        <div class="book-grid">
+            {% for book, author, cover in books %}
+            <div class="book-card">
+                <img
+                    src="{{ cover or 'https://via.placeholder.com/150x200?text=No+Cover' }}"
+                    alt="{{ book.title }} cover"
+                    class="book-cover"
+                />
+                <h3>
+                    <a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a>
+                </h3>
+                <p>{{ author.name }}</p>
+                <form
+                    action="{{ url_for('delete_book', book_id=book.id) }}"
+                    method="POST"
+                    class="delete-form"
+                  >
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-      </div>
-    </main>
-    {% endif %}
+        <button class="scroll-button right">&#10095;</button>
+    </div>
+</main>
+{% endif %}
 
     <footer>
       <p>© {{ current_year }} Book Library</p>

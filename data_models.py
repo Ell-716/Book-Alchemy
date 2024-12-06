@@ -45,6 +45,8 @@ class Book(db.Model):
         title (str): Title of the book.
         publication_year (int): Year the book was published.
         author_id (int): Foreign key referencing the Author of the book.
+        cover_url (str): URL of the book cover image.
+        description (str): Description of the book.
     """
     __tablename__ = 'books'
 
@@ -53,15 +55,15 @@ class Book(db.Model):
     title = Column(String, nullable=False)
     publication_year = Column(Integer, nullable=True)
     author_id = Column(Integer, ForeignKey('authors.id'), nullable=False)
+    cover_url = Column(String, nullable=True)
+    description = Column(String, nullable=True)
 
     author = relationship('Author', backref='books', lazy=True)
 
     def __repr__(self):
-        """
-        Returns a string representation of the Book instance for debugging.
-        """
         return (f"Book(id = {self.id}, isbn = {self.isbn}, title = {self.title}, "
-                f"publication_year = {self.publication_year})")
+                f"publication_year = {self.publication_year}, cover_url = {self.cover_url}, "
+                f"description = {self.description})")
 
     def __str__(self):
         """
