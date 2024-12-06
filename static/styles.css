@@ -35,6 +35,15 @@ header h1 {
   gap: 15px;
 }
 
+.library-title {
+  text-decoration: none;
+  color: inherit;
+}
+
+.library-title h1 {
+  display: inline;
+}
+
 .add-button {
   padding: 8px 15px;
   font-size: 14px;
@@ -167,6 +176,7 @@ input#search {
   text-decoration: none;
   color: #007bff;
   font-weight: bold;
+  font-size: 20px;
 }
 
 .search-result-container .book-card h3 a:hover {
@@ -306,6 +316,7 @@ main {
   text-decoration: none;
   color: #007bff;
   font-weight: bold;
+  font-size: 20px;
 }
 
 .book-card p {
@@ -341,7 +352,7 @@ main {
 .styled-form {
   width: 100%;
   max-width: 800px;
-  margin: auto auto;
+  margin: 50px auto;
   background-color: #FFF;
   border: 1px solid #DDD;
   padding: 25px;

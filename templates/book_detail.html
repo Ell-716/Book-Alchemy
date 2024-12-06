@@ -8,6 +8,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   </head>
   <body>
+
+    <header>
+      <div class="header-container">
+        <a href="{{ url_for('home_page') }}" class="library-title">
+            <h1>My Book Library 📚</h1>
+        </a>
+        <div class="header-right">
+          <a href="{{ url_for('add_book') }}" class="add-button">Add a book</a>
+          <a href="{{ url_for('add_author') }}" class="add-button">Add an author</a>
+        </div>
+      </div>
+    </header>
+
     <main>
       <div class="detail-container">
         <div class="book-info">
