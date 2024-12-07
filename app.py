@@ -3,7 +3,6 @@ import requests
 from datetime import datetime
 from data_models import db, Author, Book
 from flask import Flask, request, render_template, redirect, url_for
-from requests.exceptions import RequestException
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 app = Flask(__name__)
@@ -20,7 +19,6 @@ db.init_app(app)
    # db.create_all()
 
 
-@app.route("/add_author", methods=["GET", "POST"])
 @app.route("/add_author", methods=["GET", "POST"])
 def add_author():
     """
@@ -40,17 +38,17 @@ def add_author():
         # Convert birth_date and date_of_death to datetime objects if provided
         if birth_date:
             try:
-                birth_date = datetime.strptime(birth_date, "%Y-%m-%d")  # Ensure correct date format
+                birth_date = datetime.strptime(birth_date, "%Y-%m-%d")
             except ValueError:
-                birth_date = None  # Handle incorrect date format
+                birth_date = None
         else:
             birth_date = None
 
         if date_of_death:
             try:
-                date_of_death = datetime.strptime(date_of_death, "%Y-%m-%d")  # Ensure correct date format
+                date_of_death = datetime.strptime(date_of_death, "%Y-%m-%d")
             except ValueError:
-                date_of_death = None  # Handle incorrect date format
+                date_of_death = None
         else:
             date_of_death = None
 
@@ -76,10 +74,22 @@ def add_author():
 
 
 def fetch_book_details(isbn):
+    """
+    Fetches book details, including the cover image URL and description, using the Google Books API.
+    Args:
+        isbn (str): The ISBN of the book to fetch details for.
+    Returns:
+        tuple: A tuple containing:
+            - cover_url (str or None): The URL of the book's cover image if available, otherwise None.
+            - description (str or None): The description of the book if available, otherwise None.
+    """
     api_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
+
     response = requests.get(api_url)
+
     if response.status_code == 200:
         data = response.json()
+
         if "items" in data:
             volume_info = data["items"][0]["volumeInfo"]
             cover_url = volume_info.get("imageLinks", {}).get("thumbnail", None)
@@ -94,7 +104,6 @@ def add_book():
     Handles the creation of a new book. The function accepts both GET and POST requests.
     - GET: Renders the form for adding a new book.
     - POST: Processes the form submission, validates the input, and adds the book to the database.
-
     Returns:
         - Rendered HTML templates based on the success or failure of adding the book.
     """
@@ -151,7 +160,6 @@ def home_page():
     """
     Displays the homepage with a list of books. The books can be sorted by author or title,
     and a search functionality is available to filter books by title.
-
     Returns:
         - Rendered homepage with books, sorted and/or filtered based on the user's input.
     """
@@ -174,23 +182,10 @@ def home_page():
         else:
             books = db.session.query(Book, Author).join(Author).order_by(Author.name).all()
 
-    # Fetch book covers and combine data
     books_with_cover = []
     for book, author in books:
-        isbn = book.isbn
-        google_books_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
-
-        try:
-            response = requests.get(google_books_url)
-            cover = None
-            if response.status_code == 200:
-                data = response.json()
-                if "items" in data:
-                    cover = data["items"][0].get("volumeInfo", {}).get("imageLinks", {}).get("thumbnail", None)
-
-            books_with_cover.append((book, author, cover))
-        except RequestException:
-            books_with_cover.append((book, author, None))
+        cover_url, _ = fetch_book_details(book.isbn)
+        books_with_cover.append((book, author, cover_url))
 
     return render_template("home.html", books=books_with_cover,
                            sort=sort, search=search, message=message)
@@ -200,10 +195,8 @@ def home_page():
 def delete_book(book_id):
     """
     Deletes a book from the database and removes the author if they no longer have any books.
-
     Args:
         book_id (int): The ID of the book to be deleted.
-
     Returns:
         - Redirects to the homepage with a success or error message.
     """
@@ -236,21 +229,28 @@ def delete_book(book_id):
 
 @app.route('/book/<int:book_id>')
 def book_detail(book_id):
-    # Retrieve the book from your database
+    """
+    Displays detailed information about a specific book.
+    Args:
+        book_id (int): The ID of the book to retrieve details for.
+    Returns:
+        - Rendered 'book_detail.html' template with:
+            - `book`: The book object retrieved from the database.
+            - `author`: The author object retrieved from the database.
+            - `cover_url`: The book cover URL fetched from the Google Books API.
+            - `description`: The book description fetched from the Google Books API.
+    """
     book = Book.query.get_or_404(book_id)
-
-    # Fetch additional data from Google Books API
-    google_books_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{book.isbn}"
-    response = requests.get(google_books_url)
-    google_data = response.json()
-
-    # Extract book information from Google Books API response
-    book_info = google_data.get('items', [{}])[0].get('volumeInfo', {})
-
-    # Get author information (assuming it's linked to the book)
+    cover_url, description = fetch_book_details(book.isbn)
     author = book.author
 
-    return render_template('book_detail.html', book=book, author=author, book_info=book_info)
+    return render_template(
+        'book_detail.html',
+        book=book,
+        author=author,
+        cover_url=cover_url,
+        description=description
+    )
 
 
 if __name__ == "__main__":

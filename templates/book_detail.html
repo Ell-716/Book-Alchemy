@@ -26,9 +26,10 @@
         <div class="book-info">
           <h1>{{ book.title }}</h1>
           <img
-            src="{{ book_info.imageLinks.thumbnail if book_info.get('imageLinks') else 'https://via.placeholder.com/150x200?text=No+Cover' }}"
+            src="{{ cover_url if cover_url else 'https://via.placeholder.com/150x200?text=No+Cover' }}"
             alt="{{ book.title }} cover"
           />
+
           <p class="author-info">
             <strong>Written by:</strong> {{ author.name }}
           </p>
@@ -45,8 +46,9 @@
 
           <p><strong>Publication Year:</strong> {{ book.publication_year }}</p>
           <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+
           <h3>Description</h3>
-            <p>{{ book_info.get('description', 'No description available.') }}</p>
+          <p>{{ description if description else 'No description available.' }}</p>
         </div>
       </div>
     </main>

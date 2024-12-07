@@ -19,8 +19,8 @@
           <!-- Sorting Dropdown -->
           <form method="GET" action="{{ url_for('home_page') }}">
             <select name="sort" class="sort-dropdown" onchange="this.form.submit()">
-              <option value="author" {% if sort == 'author' %}selected{% endif %}>Sort by Author</option>
-              <option value="title" {% if sort == 'title' %}selected{% endif %}>Sort by Title</option>
+              <option value="author" {{ 'selected' if sort == 'author' else '' }}>Sort by Author</option>
+              <option value="title" {{ 'selected' if sort == 'title' else '' }}>Sort by Title</option>
             </select>
             <input type="hidden" name="search" value="{{ search | default('') }}">
           </form>
@@ -67,7 +67,6 @@
           </form>
         </div>
         {% endfor %}
-      </div>
     </section>
     {% endif %}
 
