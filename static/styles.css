@@ -124,86 +124,6 @@ input#search {
   box-shadow: none;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .book-card {
-    flex: 0 0 150px; /* More flexible size for smaller screens */
-    height: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .book-card {
-    flex: 0 0 100%; /* Full width on very small screens */
-    height: auto;
-  }
-}
-
-/* Individual Book Card (reuse homepage styles) */
-.search-result-container .book-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 10px;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: 450px;
-  width: 200px;
-}
-
-.search-result-container .book-cover {
-  width: 100%;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-
-/* Title and Author */
-.search-result-container .book-card h3 {
-  margin: 2px 0;
-  font-size: 16px;
-  min-height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.search-result-container .book-card h3 a {
-  text-decoration: none;
-  color: #007bff;
-  font-weight: bold;
-  font-size: 20px;
-}
-
-.search-result-container .book-card h3 a:hover {
-  text-decoration: underline;
-  color: #0056b3;
-}
-
-.search-result-container .book-card p {
-  font-size: 14px;
-  margin: 2px 0;
-}
-
-/* Delete Button */
-.search-result-container .delete-form button {
-  padding: 5px 10px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  margin-top: auto;
-}
-
-.search-result-container .delete-form button:hover {
-  background-color: #c82333;
-}
-
 /* Main grid layout */
 main {
   display: flex;
@@ -277,19 +197,19 @@ main {
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .book-card {
-    flex: 0 0 calc(33.33% - 20px); /* Show 3 books */
+    flex: 0 0 calc(33.33% - 20px);
   }
 }
 
 @media (max-width: 768px) {
   .book-card {
-    flex: 0 0 calc(50% - 20px); /* Show 2 books */
+    flex: 0 0 calc(50% - 20px);
   }
 }
 
 @media (max-width: 480px) {
   .book-card {
-    flex: 0 0 calc(100% - 20px); /* Show 1 book */
+    flex: 0 0 calc(100% - 20px);
   }
 }
 
@@ -446,6 +366,10 @@ main {
   padding: 10px;
   margin-bottom: 50px auto;
   border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .alert-success {
