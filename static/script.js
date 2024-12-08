@@ -7,14 +7,24 @@ document.addEventListener("DOMContentLoaded", () => {
             const birthDateInput = document.getElementById("birth_date");
             const deathDateInput = document.getElementById("date_of_death");
 
-            // Ensure the name is not empty
             if (!nameInput.value.trim()) {
                 event.preventDefault();
                 alert("Author name is required!");
                 return;
             }
 
-            // Ensure birth date is before date of death (if provided)
+            if (birthDateInput.value && !/^\d{4}-\d{2}-\d{2}$/.test(birthDateInput.value)) {
+                event.preventDefault();
+                alert("Birthdate must be in yyyy-mm-dd format!");
+                return;
+            }
+
+            if (deathDateInput.value && !/^\d{4}-\d{2}-\d{2}$/.test(deathDateInput.value)) {
+                event.preventDefault();
+                alert("Date of death must be in yyyy-mm-dd format!");
+                return;
+            }
+
             if (birthDateInput.value && deathDateInput.value && new Date(birthDateInput.value) > new Date(deathDateInput.value)) {
                 event.preventDefault();
                 alert("Birthdate must be before the date of death!");
@@ -31,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const publicationYearInput = document.getElementById("publication_year");
             const authorSelect = document.getElementById("author_id");
 
-            // Validate ISBN
             const isbnValue = isbnInput.value.trim();
             if (!/^\d{10}(\d{3})?$/.test(isbnValue)) {
                 event.preventDefault();
@@ -39,21 +48,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Validate title
             if (!titleInput.value.trim()) {
                 event.preventDefault();
                 alert("Book title is required!");
                 return;
             }
 
-            // Validate publication year (optional check if needed)
-            if (publicationYearInput.value && isNaN(publicationYearInput.value)) {
+            const currentYear = new Date().getFullYear();
+            if (publicationYearInput.value && (publicationYearInput.value < 1500 || publicationYearInput.value > currentYear)) {
                 event.preventDefault();
-                alert("Please enter a valid year for the publication year!");
+                alert(`Publication year must be between 1500 and ${currentYear}!`);
                 return;
             }
 
-            // Validate author selection
             if (!authorSelect.value) {
                 event.preventDefault();
                 alert("Please select an author!");
@@ -75,14 +82,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const scrollLeftButton = document.querySelector(".scroll-button.left");
     const scrollRightButton = document.querySelector(".scroll-button.right");
     const bookGrid = document.querySelector(".book-grid");
-    const scrollContainer = document.querySelector(".book-grid");
 
-    const bookWidth = document.querySelector(".book-card").offsetWidth;
-    const gap = 20;
+    if (scrollLeftButton && scrollRightButton && bookGrid && document.querySelector(".book-card")) {
+        const bookWidth = document.querySelector(".book-card").offsetWidth;
+        const gap = 20;
+        const scrollStep = (bookWidth + gap) * 4;
 
-    const scrollStep = (bookWidth + gap) * 4;
-
-    if (scrollLeftButton && scrollRightButton && bookGrid) {
         scrollLeftButton.addEventListener("click", () => {
             bookGrid.scrollBy({
                 left: -scrollStep,
@@ -98,8 +103,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Clear search input on page load
     const searchInput = document.getElementById("search");
     if (searchInput) {
-        searchInput.value = ""; // Clear the input field on page load
+        searchInput.value = "";
     }
 });

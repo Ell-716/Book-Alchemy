@@ -27,30 +27,34 @@ def add_author():
     - POST: Processes the form submission, validates the input, and adds the author to the database.
     """
     if request.method == "POST":
-        name = request.form.get('name').strip()
-        birth_date = request.form.get('birth_year')
-        date_of_death = request.form.get('death_year')
+        name = request.form.get('name', '').strip()
+        birth_date = request.form.get('birth_year', '').strip()
+        date_of_death = request.form.get('death_year', '').strip()
 
-        if not name:  # Ensure the name is not empty
-            warning_message = "Author name is required."
+        # Validate name: it must contain only alphabetic characters and spaces
+        if not name or not name.replace(' ', '').isalpha():
+            warning_message = "Author name is required and must contain only letters."
             return render_template("add_author.html", warning_message=warning_message)
 
-        # Convert birth_date and date_of_death to datetime objects if provided
-        if birth_date:
-            try:
-                birth_date = datetime.strptime(birth_date, "%Y-%m-%d")
-            except ValueError:
-                birth_date = None
-        else:
-            birth_date = None
+        # Validate birth_date and date_of_death
+        def validate_date(date_str, field_name):
+            if date_str:
+                try:
+                    return datetime.strptime(date_str, "%Y-%m-%d")
+                except ValueError:
+                    raise ValueError(f"Invalid {field_name}. Please use 'YYYY-MM-DD' format.")
+            return None
 
-        if date_of_death:
-            try:
-                date_of_death = datetime.strptime(date_of_death, "%Y-%m-%d")
-            except ValueError:
-                date_of_death = None
-        else:
-            date_of_death = None
+        try:
+            birth_date = validate_date(birth_date, "birth date")
+            date_of_death = validate_date(date_of_death, "date of death")
+
+            # Check if date_of_death is after birth_date
+            if birth_date and date_of_death and date_of_death <= birth_date:
+                warning_message = "Date of death must be after the birth date."
+                return render_template("add_author.html", warning_message=warning_message)
+        except ValueError as e:
+            return render_template("add_author.html", warning_message=str(e))
 
         # Create the Author object
         author = Author(
@@ -108,31 +112,41 @@ def add_book():
         - Rendered HTML templates based on the success or failure of adding the book.
     """
     if request.method == "POST":
-        isbn = request.form.get('isbn').strip()
-        title = request.form.get('title').strip()
-        publication_year = request.form.get('publication_year').strip()
+        isbn = request.form.get('isbn', '').strip()
+        title = request.form.get('title', '').strip()
+        publication_year = request.form.get('publication_year', '').strip()
         author_id = request.form.get('author_id')
-        cover_url = request.form.get('cover_url')
-        description = request.form.get('description')
+        cover_url = request.form.get('cover_url', '').strip()
+        description = request.form.get('description', '').strip()
 
-        if not title:
-            warning_message = "Book title is required."
+        # Validate title: it must not be empty and should contain letters
+        if not title or not any(char.isalpha() for char in title):
+            warning_message = "Book title is required and must contain letters."
             return render_template("add_book.html",
                                    authors=Author.query.all(),
                                    warning_message=warning_message)
 
-        # Validate ISBN
+        # Validate ISBN: It should contain only digits and be 10 or 13 digits long
         if not isbn.isdigit() or len(isbn) not in [10, 13]:
             warning_message = "Invalid ISBN. It should be 10 or 13 digits."
             return render_template("add_book.html",
                                    authors=Author.query.all(),
                                    warning_message=warning_message)
 
+        # Validate publication year: It should be a valid year
+        current_year = datetime.now().year
+        if publication_year:
+            if not publication_year.isdigit() or not (1000 <= int(publication_year) <= current_year):
+                warning_message = f"Invalid publication year. Must be between 1000 and {current_year}."
+                return render_template("add_book.html",
+                                       authors=Author.query.all(),
+                                       warning_message=warning_message)
+
         book = Book(
             author_id=author_id,
             isbn=isbn,
             title=title,
-            publication_year=publication_year if publication_year else None,
+            publication_year=int(publication_year) if publication_year else None,
             cover_url=cover_url,
             description=description
         )
