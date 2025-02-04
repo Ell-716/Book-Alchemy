@@ -33,7 +33,7 @@ def add_author():
 
         # Validate name: it must contain only alphabetic characters and spaces
         if not name or not name.replace(' ', '').isalpha():
-            warning_message = "Author name is required and must contain only letters!"
+            warning_message = "Invalid name. Please try again!"
             return render_template("add_author.html", warning_message=warning_message)
 
         # Check if the author already exists
@@ -48,7 +48,7 @@ def add_author():
                 try:
                     return datetime.strptime(date_str, "%Y-%m-%d")
                 except ValueError:
-                    raise ValueError(f"Invalid {field_name}. Please use 'YYYY-MM-DD' format.")
+                    raise ValueError(f"Invalid {field_name}. Please try again.")
             return None
 
         try:
@@ -154,7 +154,7 @@ def add_book():
 
         # Validate title: it must not be empty and should contain letters
         if not title or not any(char.isalpha() for char in title):
-            warning_message = "Book title is required and must contain letters."
+            warning_message = "Invalid book title. Please try again!"
             return render_template("add_book.html",
                                    authors=Author.query.all(),
                                    warning_message=warning_message)
