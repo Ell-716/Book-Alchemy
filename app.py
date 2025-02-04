@@ -169,6 +169,14 @@ def add_book():
                                        authors=Author.query.all(),
                                        warning_message=warning_message)
 
+        # Check if the book already exists
+        existing_book = Book.query.filter_by(isbn=isbn).first()
+        if existing_book:
+            warning_message = "This book already exists in the library."
+            return render_template("add_book.html",
+                                   authors=Author.query.all(),
+                                   warning_message=warning_message)
+
         book = Book(
             author_id=author_id,
             isbn=isbn,
@@ -185,9 +193,9 @@ def add_book():
             return render_template("add_book.html",
                                    authors=Author.query.all(),
                                    success_message=success_message)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            warning_message = f"Error adding book to the database: {e}"
+            warning_message = f"Error adding book to the database"
             return render_template("add_book.html",
                                    authors=Author.query.all(),
                                    warning_message=warning_message)
