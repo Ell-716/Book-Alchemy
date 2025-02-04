@@ -33,7 +33,13 @@ def add_author():
 
         # Validate name: it must contain only alphabetic characters and spaces
         if not name or not name.replace(' ', '').isalpha():
-            warning_message = "Author name is required and must contain only letters."
+            warning_message = "Author name is required and must contain only letters!"
+            return render_template("add_author.html", warning_message=warning_message)
+
+        # Check if the author already exists
+        existing_author = Author.query.filter_by(name=name).first()
+        if existing_author:
+            warning_message = "This author already exists!"
             return render_template("add_author.html", warning_message=warning_message)
 
         # Validate birth_date and date_of_death
@@ -68,9 +74,9 @@ def add_author():
             db.session.commit()
             success_message = "Author added successfully!"
             return render_template("add_author.html", success_message=success_message)
-        except SQLAlchemyError as e:
+        except SQLAlchemyError:
             db.session.rollback()
-            warning_message = f"Error adding author to the database: {e}"
+            warning_message = f"Error adding author to the database!"
             return render_template("add_author.html", warning_message=warning_message)
 
     if request.method == "GET":
@@ -172,7 +178,7 @@ def add_book():
         # Check if the book already exists
         existing_book = Book.query.filter_by(isbn=isbn).first()
         if existing_book:
-            warning_message = "This book already exists in the library."
+            warning_message = "This book already exists in the library!"
             return render_template("add_book.html",
                                    authors=Author.query.all(),
                                    warning_message=warning_message)
@@ -195,7 +201,7 @@ def add_book():
                                    success_message=success_message)
         except SQLAlchemyError:
             db.session.rollback()
-            warning_message = f"Error adding book to the database"
+            warning_message = f"Error adding the book!"
             return render_template("add_book.html",
                                    authors=Author.query.all(),
                                    warning_message=warning_message)
